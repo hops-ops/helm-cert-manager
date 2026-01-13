@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   validate:
-    uses: unbounded-tech/workflows-crossplane/.github/workflows/validate.yaml@v2.7.0
+    uses: unbounded-tech/workflows-crossplane/.github/workflows/validate.yaml@v2.12.3
     with:
       examples: |
         [
@@ -34,13 +34,17 @@ jobs:
       error_on_missing_schemas: true
 
   test:
-    uses: unbounded-tech/workflows-crossplane/.github/workflows/test.yaml@v2.7.0
+    uses: unbounded-tech/workflows-crossplane/.github/workflows/test.yaml@v2.12.3
+
+  e2e:
+    uses: unbounded-tech/workflows-crossplane/.github/workflows/e2e.yaml@v2.12.3
 
   version-and-tag:
     name: Version and Tag
     needs:
       - validate
       - test
+      - e2e
     uses: unbounded-tech/workflow-vnext-tag/.github/workflows/workflow.yaml@v1.20.2
     secrets:
       DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
