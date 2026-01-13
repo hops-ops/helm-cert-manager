@@ -1,0 +1,43 @@
+# code: language=yaml
+#
+# Helm release for cert-manager
+#
+
+{{- $cm := $state.certManager }}
+
+---
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: Release
+metadata:
+  name: {{ $cm.releaseName }}
+  annotations:
+    {{ setResourceNameAnnotation "helm-release-cert-manager" }}
+  labels: {{ $cm.labels | toJson }}
+spec:
+  managementPolicies: {{ $cm.managementPolicies | toJson }}
+  forProvider:
+    chart:
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.17.2
+    namespace: {{ $cm.namespace }}
+    {{- if $cm.overrideAllValues }}
+    values:
+      {{- toYaml $cm.overrideAllValues | nindent 6 }}
+    {{- else }}
+    values:
+      fullnameOverride: cert-manager
+      nameOverride: cert-manager
+      crds:
+        enabled: true
+      global:
+        leaderElection:
+          namespace: {{ $cm.namespace }}
+      {{- if $cm.values }}
+      {{- toYaml $cm.values | nindent 6 }}
+      {{- end }}
+    {{- end }}
+  rollbackLimit: 3
+  providerConfigRef:
+    name: {{ $cm.providerConfigRef.name }}
+    kind: {{ $cm.providerConfigRef.kind }}

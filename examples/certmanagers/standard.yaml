@@ -1,0 +1,13 @@
+apiVersion: helm.hops.ops.com.ai/v1alpha1
+kind: CertManager
+metadata:
+  name: cert-manager
+  namespace: example-env
+spec:
+  clusterName: example-cluster
+  labels:
+    team: platform
+  namespace: cert-manager
+  values:
+    prometheus:
+      enabled: false
