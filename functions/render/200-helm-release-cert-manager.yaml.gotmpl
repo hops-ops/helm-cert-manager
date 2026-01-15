@@ -2,9 +2,9 @@
 #
 # Helm release for cert-manager
 #
-# Integration defaults:
-# - Prometheus metrics enabled for certificate monitoring
-# - ServiceMonitor created for Prometheus Operator discovery
+# Optional integrations (via spec.prometheus: true):
+# - Prometheus metrics for certificate monitoring
+# - ServiceMonitor for Prometheus Operator discovery
 #
 
 {{- $cm := $state.certManager }}
@@ -37,11 +37,13 @@ spec:
       global:
         leaderElection:
           namespace: {{ $cm.namespace }}
+      {{- if $cm.prometheus }}
       # Prometheus metrics for certificate health monitoring
       prometheus:
         enabled: true
         servicemonitor:
           enabled: true
+      {{- end }}
       {{- if $cm.values }}
       {{- toYaml $cm.values | nindent 6 }}
       {{- end }}
