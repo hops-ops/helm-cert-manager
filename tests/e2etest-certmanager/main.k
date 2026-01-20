@@ -1,7 +1,7 @@
 import datetime
 import math
+import models.ai.com.ops.hops.helm.v1alpha1 as helmv1alpha1
 import models.io.upbound.dev.meta.v1alpha1 as metav1alpha1
-import models.k8s.apimachinery.pkg.apis.meta.v1 as metav1
 
 # ==============================================================================
 # E2E Test for CertManager XRD (Kubernetes-only)
@@ -19,9 +19,11 @@ _items = [
         metadata.name = "certmanager-helm"
         spec = {
             crossplane = {
-                version = "2.0.2-up.5"
-                autoUpgrade.channel = "None"
+                autoUpgrade.channel = "Rapid"
             }
+            defaultConditions = ["Ready"]
+            timeoutSeconds = 1800
+            cleanupTimeoutSeconds = 1800
             skipDelete = False
 
             # ==============================================================
@@ -50,9 +52,7 @@ _items = [
             # manifests: The CertManager XR to test
             # ==============================================================
             manifests = [
-                {
-                    apiVersion = "helm.hops.ops.com.ai/v1alpha1"
-                    kind = "CertManager"
+                helmv1alpha1.CertManager {
                     metadata = {
                         name = _test_name
                         namespace = "default"
@@ -66,31 +66,6 @@ _items = [
                         providerConfigRef = {
                             name = "default"
                             kind = "ProviderConfig"
-                        }
-                        values = {
-                            # Minimal resources for E2E test
-                            resources = {
-                                requests = {
-                                    cpu = "10m"
-                                    memory = "32Mi"
-                                }
-                            }
-                            webhook = {
-                                resources = {
-                                    requests = {
-                                        cpu = "10m"
-                                        memory = "32Mi"
-                                    }
-                                }
-                            }
-                            cainjector = {
-                                resources = {
-                                    requests = {
-                                        cpu = "10m"
-                                        memory = "32Mi"
-                                    }
-                                }
-                            }
                         }
                     }
                 }
