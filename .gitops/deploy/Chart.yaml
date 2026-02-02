@@ -2,4 +2,4 @@ apiVersion: v2
 name: helm-cert-manager
 version: 0.0.0
 description: GitOps packaging for the cert-manager Crossplane configuration
-appVersion: v1.19.2
+appVersion: v1.19.3
